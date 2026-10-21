@@ -1,0 +1,201 @@
+:root {
+  --sidebar-rail: 46px;
+  --workspace-header-height: 46px;
+}
+body {
+  --sidebar-current: var(--sidebar);
+  --page-half-width: min(max(560px, 50vw), calc(100vw - var(--sidebar-current) - 200px));
+}
+body:has(.app-shell.sidebar-hidden) { --sidebar-current: var(--sidebar-rail); }
+
+.app-shell > .sidebar-rail {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 0 0 var(--sidebar-rail);
+  width: var(--sidebar-rail);
+  padding: 60px 8px 22px;
+  background: #f9f9f9;
+  border-right: 1px solid #0000000a;
+  z-index: 10;
+}
+.sidebar-rail > .rail-connection-status { margin-top: auto; }
+.app-shell .workspace-topbar {
+  height: var(--workspace-header-height);
+  padding: 7px 16px;
+  z-index: 24;
+}
+.app-shell.sidebar-hidden .workspace .workspace-topbar {
+  padding-left: 56px;
+}
+.workspace-toolbar-left { display: flex; align-items: center; flex: 1; min-width: 0; gap: 12px; }
+.workspace-toolbar-left > .icon-button { width: 32px; height: 32px; flex: none; border-radius: 7px; }
+.workspace-toolbar-left > .page-toolbar-slot { display: flex; align-items: center; flex: 1; min-width: 0; }
+.page-toolbar-slot > * { -webkit-app-region: no-drag; }
+.app-shell .sidebar-account { gap: 8px; }
+.app-shell .sidebar-account > span:last-child { flex: 1; }
+
+.app-shell > .connection-popover {
+  position: fixed;
+  width: min(326px, calc(100vw - 24px));
+  max-height: calc(100vh - 88px);
+  overflow-y: auto;
+}
+.connection-project { display: grid; gap: 7px; margin: 15px 0 12px; }
+.connection-project > span { font-size: 11px; color: #5d5d5d; }
+.connection-project .settings-project-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 9px 10px;
+  border: 1px solid #00000015;
+  border-radius: 8px;
+  background: white;
+  color: #303030;
+  font-size: 12px;
+  cursor: pointer;
+}
+.settings-project-button > span {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  text-align: left;
+}
+.settings-project-button:hover { border-color: #00000035; background: #f9f9f9; }
+
+.composer-hint > .composer-shortcuts {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  gap: 5px;
+  max-width: none;
+  overflow: visible;
+  line-height: 12px;
+}
+.composer-shortcuts .composer-shortcut {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  line-height: 12px;
+  white-space: nowrap;
+}
+.composer-shortcuts .composer-shortcut > kbd {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  height: 12px;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  color: inherit;
+  font: inherit;
+  line-height: 1;
+  vertical-align: middle;
+}
+.composer-shortcut > kbd > span { display: inline-flex; align-items: center; height: 12px; line-height: 1; font-size: 11px; }
+.composer-shortcut > kbd > svg { display: block; flex: none; }
+.composer-shortcut-separator { color: #8f8f8f; line-height: 12px; }
+
+@media (max-width: 800px) {
+  .app-shell .workspace-topbar { padding-right: 14px; }
+  .app-shell .sidebar-brand .icon-button { display: inline-flex; }
+}
+
+/* The exposed canvas is a real pane; controls and React Flow share its bounds. */
+.app-shell.is-page-focused .canvas-surface {
+  right: auto;
+  width: calc(100% - var(--page-half-width));
+}
+.app-shell.is-page-focused-half .canvas-surface { container-type: inline-size; }
+.app-shell.is-page-focused-half .canvas-dock {
+  width: max-content;
+  max-width: calc(100% - 16px);
+  gap: 0;
+  padding: 4px;
+  bottom: 18px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.app-shell.is-page-focused-half .canvas-dock .dock-button {
+  width: 30px;
+  min-width: 30px;
+  height: 32px;
+  padding: 6px;
+  justify-content: center;
+}
+.app-shell.is-page-focused-half .canvas-dock .dock-button > span { display: none; }
+.app-shell.is-page-focused-half .canvas-dock > .icon-button { width: 28px; min-width: 28px; height: 32px; }
+.app-shell.is-page-focused-half .canvas-dock .dock-divider { margin: 0 2px; }
+.app-shell.is-page-focused-half .zoom-control {
+  display: flex;
+  right: 12px;
+  bottom: 106px;
+}
+.app-shell.is-page-focused-half .canvas-coordinate-label { display: none; }
+
+@container (min-width: 280px) {
+  .app-shell.is-page-focused-half .zoom-control { bottom: 74px; }
+}
+
+/* Each canvas has sibling selection and deletion controls. */
+.board-list > .board-row { display: flex; align-items: center; min-width: 0; border-radius: 7px; }
+.board-list > .board-row.active { background: #ededed; }
+.board-list > .board-row:hover { background: #f0f0f0; }
+.board-list .board-row > .board-button { flex: 1; min-width: 0; width: auto; background: transparent; padding-right: 5px; }
+.board-list .board-row > .board-delete {
+  flex: none; width: 26px; height: 26px; margin-right: 5px; border-radius: 5px; color: #8f8f8f;
+  opacity: 0; pointer-events: none;
+}
+.board-list .board-row:hover > .board-delete,
+.board-list .board-row:focus-within > .board-delete,
+.board-list .board-row.active > .board-delete { opacity: 1; pointer-events: auto; }
+.board-list .board-row > .board-delete:hover { background: #fff; color: #b42318; }
+.delete-canvas-modal { width: 430px; max-width: calc(100vw - 32px); }
+.delete-canvas-symbol { display: grid; place-items: center; width: 44px; height: 44px; margin-bottom: 20px; border-radius: 12px; background: #fff1ef; color: #b42318; }
+.delete-canvas-modal > h2 { margin-bottom: 9px; overflow-wrap: anywhere; }
+.delete-canvas-modal > .delete-canvas-count { margin: 0 0 18px; color: #8f8f8f; font-size: 12px; }
+.delete-canvas-modal > #delete-canvas-scope { line-height: 1.6; margin-bottom: 12px; }
+.delete-canvas-modal > .delete-canvas-replacement { margin: 0; font-size: 12px; color: #5d5d5d; }
+.delete-canvas-modal > .delete-canvas-error { margin-top: 14px; padding: 10px 12px; border-radius: 8px; background: #fff1ef; color: #a62017; font-size: 12px; }
+.delete-canvas-actions { display: flex; justify-content: flex-end; gap: 9px; margin-top: 25px; }
+.delete-canvas-actions > .delete-canvas-confirm { background: #b42318; color: #fff; border-color: #b42318; }
+.delete-canvas-actions > .delete-canvas-confirm:hover { background: #941d14; border-color: #941d14; }
+.delete-canvas-actions > button:disabled { opacity: .6; cursor: wait; }
+
+.app-shell.is-page-focused .workspace-top-actions > .saved-label:not(.save-error),
+.app-shell.is-page-focused .workspace-top-actions > [data-testid="export-board"] { display: none; }
+.board-list .board-row .canvas-name-input {
+  flex: 1;
+  min-width: 0;
+  width: 100%;
+  padding: 2px 0;
+  border: 0;
+  border-bottom: 1px solid #8f8f8f;
+  border-radius: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  outline: none;
+}
+
+.app-shell.is-page-focused .workspace-topbar { padding-left: 8px; padding-right: 8px; }
+.app-shell.is-page-focused.sidebar-hidden .workspace-topbar { padding-left: 56px; }
+.app-shell > .sidebar-rail { background:#f4f4f4; border-right-color:#e9e9e9; }
+.board-list > .board-row { min-height:36px; border-radius:8px; }
+.board-list > .board-row.active,.board-list > .board-row:hover { background:#eee; }
+.board-list .board-row > .board-button { min-height:36px; padding-top:7px; padding-bottom:7px; }
+.board-list .board-row > .board-delete { width:28px; height:28px; border-radius:7px; }
+.app-shell.is-page-focused .workspace-topbar { background:#fcfcfc; }
+.connection-footer-status {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #5d5d5d;
+}

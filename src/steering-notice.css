@@ -1,0 +1,5 @@
+.steering-notice { display:flex; align-items:center; justify-content:flex-end; flex-wrap:wrap; gap:5px; margin:5px 2px 0; color:#8f8f8f; font-size:11px; line-height:1.5; font-weight:400; }
+.steering-notice > svg { flex:none; }
+.steering-notice.needs-attention { color:#6f6f6f; }
+.steering-notice-detail { flex-basis:100%; font-size:10px; text-align:right; }
+@media (prefers-reduced-motion:reduce) { .steering-notice .spin { animation:none; } }

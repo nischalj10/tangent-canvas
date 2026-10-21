@@ -1,0 +1,36 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import os from 'node:os';
+import {fileURLToPath} from 'node:url';
+import {_electron as electron,expect} from '@playwright/test';
+const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
+
+test('generated image remains inline in the second answer after queued third question, fullscreen and relaunch',{timeout:45000},async t=>{
+  const folder=await fs.mkdtemp(path.join(os.tmpdir(),'tangent-inline-image-ui-'));
+  const env={...process.env,TANGENT_E2E:'1',TANGENT_ALLOW_MULTIPLE:'1',TANGENT_DATA_DIR:path.join(folder,'data'),TANGENT_TEST_CODEX_BINARY:path.join(root,'tests/fixtures/codex-appserver.mjs'),TANGENT_FIXTURE_STATE:path.join(folder,'peer.json'),TANGENT_TEST_IMAGE:path.join(root,'assets/icon.png')};
+  let app,page;const errors=[],proof={};
+  const close=async()=>{const current=app;app=null;if(!current)return;const timer=setTimeout(()=>current.process()?.kill('SIGKILL'),6000);try{await current.close()}finally{clearTimeout(timer)}};
+  const launch=async()=>{app=await electron.launch({args:['.','--background'],cwd:root,env});page=await app.firstWindow();page.setDefaultTimeout(7000);page.on('pageerror',e=>errors.push(e.message));await page.getByTestId('canvas-surface').waitFor();await expect.poll(()=>page.evaluate(()=>window.tangent.invoke('app/connection'))).toMatchObject({connected:true});assert.equal(await app.evaluate(({BrowserWindow})=>BrowserWindow.getAllWindows()[0].isVisible()),false)};
+  const call=(method,payload)=>page.evaluate(({method,payload})=>window.tangent.invoke(method,payload),{method,payload});
+  const board=async()=>{const s=await call('app/state');return s.boards.find(b=>b.id===s.activeBoardId)};
+  const node=async id=>(await board()).nodes.find(n=>n.id===id);
+  t.after(async()=>{await close();await fs.rm(folder,{recursive:true,force:true})});
+  await launch();await app.evaluate(({BrowserWindow})=>BrowserWindow.getAllWindows()[0].setContentSize(1440,1000));
+  await page.getByTestId('new-chat').click();let chat;await expect.poll(async()=>{chat=(await board()).nodes.find(n=>n.kind==='chat');return Boolean(chat)}).toBe(true);
+  const composer=()=>page.getByTestId(`composer-${chat.id}`);
+  await composer().fill('Reply exactly: FIRST_ANSWER');await page.getByTestId(`send-${chat.id}`).click();await expect.poll(async()=>(await node(chat.id)).status).toBe('idle');
+  await composer().fill('INLINE_IMAGE_TEST Draw an image for my second question');await page.getByTestId(`send-${chat.id}`).click();
+  await expect.poll(async()=>(await node(chat.id)).status).toBe('running');await composer().fill('Reply exactly: THIRD_ANSWER');await page.getByTestId(`queue-${chat.id}`).click();
+  await expect.poll(async()=>(await node(chat.id)).messages.at(-1)?.text,{timeout:15000}).toBe('THIRD_ANSWER');
+  const current=await node(chat.id),image=current.messages.find(m=>m.kind==='imageGeneration'),second=current.messages.find(m=>m.role==='user'&&m.text.includes('INLINE_IMAGE_TEST')),third=current.messages.find(m=>m.role==='user'&&m.text.includes('THIRD_ANSWER'));
+  assert.ok(image?.images?.length);assert.equal(image.turnId,second.turnId);assert.notEqual(image.turnId,third.turnId);assert.ok(current.messages.indexOf(image)<current.messages.indexOf(third));
+  const verify=async scope=>{const figure=scope.getByTestId(`generated-image-${image.images[0].id}`);await expect(figure).toHaveCount(1);await expect(figure).toHaveAttribute('data-image-turn-id',second.turnId);await expect.poll(()=>figure.locator('img').evaluate(el=>el.complete&&el.naturalWidth>0)).toBe(true);assert.equal(await figure.evaluate(el=>el.closest('article').dataset.messageId),image.id);await expect(scope.locator('[data-image-placement="unbound-legacy"]')).toHaveCount(0);await expect(scope.getByText('Add to document',{exact:true})).toHaveCount(0)};
+  await verify(page.getByTestId(`card-${chat.id}`));
+  await page.getByTestId(`chat-focus-open-${chat.id}`).click();const full=page.getByTestId(`chat-fullscreen-${chat.id}`);await expect(full).toBeVisible();await verify(full);
+  const shot=path.join(root,'screenshots/inline-image-original-answer.png');await page.screenshot({path:shot});
+  Object.assign(proof,{passed:true,scope:'Hidden actual Electron renderer, deterministic Codex peer',imageMessageId:image.id,imageTurn:second.turnId,thirdTurn:third.turnId,sameImageUnderOwnMessage:true,queuedNextQuestionDoesNotMoveImage:true,noPageOrDocumentCreated:(await board()).nodes.every(n=>!['page','document'].includes(n.kind)),screenshot:shot});
+  assert.equal(proof.noPageOrDocumentCreated,true);await close();await launch();await verify(page.getByTestId(`card-${chat.id}`));assert.deepEqual(errors,[]);
+  await fs.writeFile(path.resolve(root,'../../work/inline-images-ui-proof.json'),JSON.stringify(proof,null,2)+'\n');t.diagnostic('Native image item stayed in second turn through queued third answer, fullscreen and relaunch; no document or Page created.');
+});

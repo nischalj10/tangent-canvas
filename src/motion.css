@@ -1,0 +1,76 @@
+/* Lifecycle is controlled by motion.mjs, using the installed Codex tokens. */
+:root {
+  --motion-basic: 150ms;
+  --motion-moderate: 200ms;
+  --motion-relaxed: 300ms;
+  --motion-enter: cubic-bezier(.19, 1, .22, 1);
+  --motion-exit: cubic-bezier(.8, 0, .4, 1);
+  --motion-snappy: cubic-bezier(.23, 1, .32, 1);
+}
+[data-motion-kind], [data-motion-kind] > .modal { animation: none !important; }
+[data-motion-state="closing"] { pointer-events: none !important; }
+.sidebar[hidden] { display: none !important; }
+.sidebar-hidden > .sidebar[data-motion-state="closing"] {
+  display: flex;
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: var(--sidebar);
+  z-index: 25;
+}
+/* Avoid layout animation on this high-frequency navigation affordance. */
+.page-outline-trigger { transition-property: opacity !important; }
+.page-outline-trigger > i {
+  width: 26px !important;
+  transform: scaleX(calc(12 / 26));
+  transform-origin: left center;
+  transition: none !important;
+}
+.page-outline-trigger > i.level-2 { transform: scaleX(calc(8 / 26)); }
+.page-outline-trigger > i.level-3 { transform: scaleX(calc(4 / 26)); }
+.page-outline-trigger > i.active { transform: scaleX(1); }
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  html[data-input-modality="pointer"] .page-outline-trigger > i { transition: transform 120ms var(--motion-snappy), opacity 120ms var(--motion-snappy) !important; }
+  .page-outline-rail:hover .page-outline-trigger > i { transform: scaleX(1); }
+}
+.page-options-menu { transform-origin: top left; }
+.page-outline-popover { transform-origin: left center; }
+.page-outline-popover[data-motion-kind] { display: block; }
+.toast { animation: none; }
+
+/* Hover affordances stay on fine pointers; keyboard focus needs no travel. */
+.page-floating-toolbar button[data-tooltip]::after { transition: opacity 150ms var(--motion-enter); transform: none; }
+@media (hover: none), (pointer: coarse) {
+  .page-floating-toolbar button[data-tooltip]:hover::after { opacity: 0; visibility: hidden; }
+}
+html[data-input-modality="keyboard"] :is(button, .icon-button, .composer, .message-actions, .node-handle) {
+  transition-duration: 0s !important;
+}
+html[data-input-modality="keyboard"] [data-tooltip]::after { transition-duration: 0s !important; }
+
+/* The source Button scales its background/focus pseudo-elements, preserving
+   unscaled labels/icons; widths use the shipped .96/.97/.98/.985/.995 values. */
+[data-motion-press] { position: relative; }
+[data-motion-press]::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  background: currentColor;
+  opacity: 0;
+  transform: scale(1);
+  transition: opacity var(--motion-basic) var(--motion-enter), transform var(--motion-basic) var(--motion-enter);
+}
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  html[data-input-modality="pointer"] [data-motion-press]:enabled:active:not(:focus-visible)::before {
+    opacity: .065;
+    transform: scale(var(--button-press-scale));
+  }
+}
+html[data-input-modality="keyboard"] [data-motion-press]::before { transition: none; }
+@media (prefers-reduced-motion: reduce) {
+  .workspace, .page-reader-shell, [data-motion-kind], [data-motion-kind] > .modal { transition: none !important; }
+  .page-floating-toolbar [data-tooltip]::after { transform: none !important; }
+  .spin, .stream-dot, .typing-dots i { animation: none !important; transform: none !important; }
+  [data-motion-press]::before { transform: none !important; transition: none !important; }
+}

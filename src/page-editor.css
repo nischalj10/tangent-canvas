@@ -1,0 +1,36 @@
+.page-rich-editor .ProseMirror{outline:none;white-space:pre-wrap;overflow-wrap:break-word;line-height:1.5;min-height:120px;caret-color:#0d0d0d}
+.page-rich-editor .ProseMirror[contenteditable=true]{cursor:text}
+.page-rich-editor .ProseMirror .linked-page-block{position:relative;padding:0;border:0;border-radius:0;background:transparent;outline:none}
+.page-rich-editor .ProseMirror .linked-page-block:hover{background:transparent;box-shadow:none}
+.page-rich-editor .ProseMirror .page-document-title{margin-top:0}
+.page-rich-editor .ProseMirror .page-source-protected{user-select:text;cursor:default}
+.page-rich-editor .ProseMirror ul,.page-rich-editor .ProseMirror ol{padding-left:1.7em}
+.page-rich-editor .ProseMirror li>p{margin:3px 0}
+.page-rich-editor .ProseMirror u{text-decoration:underline;text-underline-offset:2px}
+.page-rich-editor .ProseMirror s{text-decoration:line-through}
+.page-rich-editor .ProseMirror a{color:inherit;text-decoration:underline;text-decoration-color:#999;text-underline-offset:3px;cursor:text}
+.page-rich-editor .ProseMirror pre{white-space:pre;overflow:auto;background:#f6f6f6;border-radius:10px;padding:16px;font-size:13px}
+.page-rich-editor .ProseMirror table{border-collapse:collapse;table-layout:auto;width:100%;margin:20px 0;overflow:hidden}
+/* A table may be wider than a narrow reading column. Keep its native table
+   layout and scroll inside the source block instead of widening the Page. */
+.page-rich-editor .ProseMirror .page-rich-block-content:has(>table),.page-rich-editor .ProseMirror .tableWrapper{min-width:0;max-width:100%;overflow-x:auto;overscroll-behavior-x:contain}
+.page-rich-editor .ProseMirror td,.page-rich-editor .ProseMirror th{min-width:70px;border:1px solid #dedede;padding:10px 12px;position:relative;vertical-align:top}
+.page-rich-editor .ProseMirror th{background:#f7f7f7;font-weight:600}
+.page-rich-editor .ProseMirror td p,.page-rich-editor .ProseMirror th p{margin:0}
+.page-rich-editor .ProseMirror .selectedCell:after{background:#00000008}
+.page-cloud-status{display:flex;align-items:center;justify-content:flex-end;gap:5px;color:#858585;font-size:11px;line-height:18px;min-height:22px;margin:18px 0 0;user-select:none}
+.page-cloud-status button{font-size:11px;text-decoration:underline;text-underline-offset:3px;margin-left:6px}
+.page-cloud-status.is-conflict,.page-cloud-status.is-uncertain,.page-cloud-status.is-local-error{color:#8b4c13}
+.page-rich-save-error,.page-rich-conflict{font:13px/1.5 -apple-system,system-ui,sans-serif;background:#fff8ed;border:1px solid #e4c9a2;border-radius:12px;padding:16px;margin:16px 0;color:#513819}
+.page-rich-conflict p{font-size:13px;margin:6px 0 12px}.page-rich-conflict label{font-size:11px;color:#756248}.page-rich-conflict pre{white-space:pre-wrap;overflow-wrap:anywhere;max-height:180px;overflow:auto;font:13px/1.5 -apple-system,system-ui,sans-serif;padding:10px;background:#ffffffaa;border-radius:7px}
+.page-rich-conflict-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}.page-rich-conflict-actions button{font-size:12px;padding:7px 10px;background:#fff;border:1px solid #0002;border-radius:8px}.page-rich-conflict-actions button:last-child{background:#222;color:#fff}
+.page-rich-toolbar{position:fixed;z-index:1100;display:flex;align-items:center;flex-wrap:wrap;gap:2px;max-width:min(728px,calc(100vw - 24px));padding:5px;background:#fff;border:1px solid #00000014;border-radius:12px;box-shadow:0 3px 16px #00000018;color:#303030;font:13px/18px -apple-system,system-ui,sans-serif}
+.page-rich-toolbar>button{width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;border-radius:6px}.page-rich-toolbar>button:hover,.page-rich-toolbar>button[aria-pressed=true]{background:#eee}.page-rich-toolbar button:focus-visible,.page-rich-toolbar select:focus-visible{outline:2px solid #999;outline-offset:1px}.page-rich-toolbar>i{width:1px;height:16px;background:#e5e5e5;margin:0 3px}.page-rich-toolbar select{font:12px/18px -apple-system,system-ui,sans-serif;width:94px;border:0;background:transparent;padding:5px 3px}.page-rich-toolbar>button.page-rich-ask{width:auto;gap:6px;font-size:12px;padding:0 7px}
+.page-rich-table-menu{position:absolute;top:calc(100% + 6px);right:0;display:grid;min-width:160px;padding:5px;border:1px solid #0001;border-radius:10px;background:#fff;box-shadow:0 3px 16px #0002}.page-rich-table-menu button{text-align:left;padding:7px 10px;border-radius:6px;font-size:12px}.page-rich-table-menu button:hover{background:#f3f3f3}.page-rich-table-menu button:disabled{opacity:.35;pointer-events:none}
+.page-rich-link-scrim{position:fixed;inset:0;z-index:1200;display:flex;align-items:center;justify-content:center;background:#0002}.page-rich-link-dialog{width:360px;max-width:calc(100vw - 40px);padding:20px;border-radius:16px;background:#fff;box-shadow:0 8px 40px #0002;font:13px/1.5 -apple-system,system-ui,sans-serif}.page-rich-link-dialog label{display:grid;gap:8px}.page-rich-link-dialog input{width:100%;border:1px solid #ddd;border-radius:8px;padding:9px 11px;font:13px/1.5 -apple-system,system-ui,sans-serif}.page-rich-link-dialog>div{display:flex;justify-content:flex-end;gap:8px;margin-top:14px}.page-rich-link-dialog button{padding:7px 12px;border-radius:8px;background:#f3f3f3;font-size:12px}.page-rich-link-dialog button[type=submit]{background:#222;color:#fff}.page-rich-link-dialog button:disabled{opacity:.4}
+
+.page-quoted-highlight{background:#fff1ad;box-shadow:0 0 0 1px #e8ce6830;border-radius:2px;box-decoration-break:clone}
+
+.page-title-and-save{display:flex;align-items:center;gap:12px;min-width:0;flex:1}.page-title-and-save>.page-title-options{flex:0 1 350px}.page-save-slot{flex:none;min-width:0}.page-save-slot .page-cloud-status{margin:0;min-height:18px;white-space:nowrap}.page-title-and-save>.page-save-slot:empty{display:none}@media(max-width:1100px){.page-save-slot .page-cloud-status>span{display:none}}
+
+.page-rich-editor.is-empty .linked-page-block{min-height:150px;cursor:text}.page-rich-editor.is-empty .page-rich-block-content:before{content:attr(data-placeholder);color:#999}.page-rich-editor.is-empty .page-rich-block-content:before{content:'Start writing…';position:absolute;pointer-events:none;top:0;left:0}.page-rich-editor.is-empty[aria-busy=true] .page-rich-block-content:before{content:'Opening editor…'}

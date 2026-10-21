@@ -1,0 +1,5 @@
+.canvas-summary-hover { position:fixed; z-index:1200; box-sizing:border-box; width:360px; max-width:calc(100vw - var(--sidebar-current,260px) - 24px); max-height:calc(100vh - 96px); overflow:auto; padding:15px 17px 16px; border:1px solid #00000016; border-radius:16px; background:#fff; color:#303030; box-shadow:0 8px 28px #00000012,0 2px 6px #00000005; font-family:inherit; text-align:left; cursor:text; -webkit-app-region:no-drag; }
+.canvas-summary-hover-heading { display:flex; align-items:flex-start; gap:8px; color:#747474; font-size:12px; line-height:18px; }
+.canvas-summary-hover-heading > svg { flex:none; margin-top:2px; color:#8c8c8c; }
+.canvas-summary-hover-heading > span { min-width:0; display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2; overflow:hidden; }
+.canvas-summary-hover > p { margin:9px 0 0; font-size:14px; line-height:22px; font-weight:400; overflow-wrap:anywhere; white-space:normal; }

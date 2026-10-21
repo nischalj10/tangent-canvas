@@ -1,0 +1,33 @@
+# Dependencies and generated builds
+node_modules/
+dist/
+release/
+coverage/
+test-results/
+playwright-report/
+assets/icon.iconset/
+
+# Local QA evidence, recordings, and investigation notes
+screenshots/
+demos/
+work/
+TESTING.md
+REFERENCE-*.md
+RESEARCH.md
+verification*.json
+*.log
+
+# Private runtime state and credentials
+.codex/
+.env
+.env.*
+!.env.example
+canvas-state*.json
+auth.json
+*.pem
+*.key
+
+# OS and editor metadata
+.DS_Store
+.idea/
+.vscode/

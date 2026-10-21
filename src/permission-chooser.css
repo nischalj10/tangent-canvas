@@ -1,0 +1,21 @@
+.permission-chooser-trigger { display:inline-flex; align-items:center; flex:none; gap:5px; min-height:26px; padding:3px 6px; border:0; border-radius:6px; background:transparent; color:#666; font-size:11px; line-height:18px; white-space:nowrap; cursor:pointer; -webkit-app-region:no-drag; }
+.permission-chooser-trigger:hover { background:#ededed; }
+.permission-chooser-trigger.is-full { color:#a9501d; background:#fff3eb; }
+.permission-chooser-trigger.is-full:hover { background:#ffe8d7; }
+.permission-chooser-trigger > small { color:#7a665b; font-size:9px; padding-left:2px; }
+.permission-chooser-trigger:focus-visible { outline:2px solid #888; outline-offset:2px; }
+.permission-chooser-trigger:disabled { opacity:.5; cursor:wait; }
+.composer-settings:has(.permission-chooser-trigger) { flex-wrap:wrap; }
+.permission-chooser-menu { position:fixed; z-index:1400; width:min(316px,calc(100vw - 24px)); max-height:calc(100vh - 24px); overflow:auto; padding:6px; border:1px solid #00000016; border-radius:14px; background:#fff; box-shadow:0 12px 40px #00000020,0 2px 8px #0000000a; color:#303030; -webkit-app-region:no-drag; }
+.permission-chooser-heading { margin:4px 8px 6px; color:#777; font-size:11px; font-weight:500; line-height:18px; }
+.permission-chooser-menu .permission-choice { display:flex; align-items:center; gap:10px; width:100%; padding:10px 9px; border:0; border-radius:8px; background:transparent; text-align:left; color:#303030; cursor:pointer; }
+.permission-chooser-menu .permission-choice:hover,.permission-chooser-menu .permission-choice:focus-visible { background:#f4f4f4; outline:none; }
+.permission-choice > span:nth-child(2) { flex:1; min-width:0; }
+.permission-choice strong { display:block; font-size:13px; font-weight:500; line-height:20px; }
+.permission-choice small { display:block; margin-top:1px; font-size:11px; line-height:16px; color:#777; }
+.permission-choice-symbol { display:flex; align-items:center; justify-content:center; flex:none; width:28px; height:30px; color:#777; }
+.permission-choice.is-full .permission-choice-symbol { color:#b65a21; }
+.permission-chooser-current { margin:6px 8px 3px; padding-top:9px; border-top:1px solid #0000000c; color:#777; font-size:11px; line-height:17px; }
+.permission-chooser-current strong { color:#555; font-weight:500; }
+
+.page-composer-settings{flex-wrap:wrap;row-gap:5px}.page-composer-settings .permission-chooser{flex:none}.composer-settings{flex-wrap:wrap}

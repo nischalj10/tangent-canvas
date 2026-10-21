@@ -1,0 +1,75 @@
+{
+  "name": "tangent-canvas",
+  "productName": "Tangent Canvas",
+  "version": "0.4.10",
+  "description": "A canvas for Codex conversations, rabbit holes, and agent-answered comments.",
+  "private": true,
+  "type": "module",
+  "main": "electron/main.mjs",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "vite build",
+    "start": "electron .",
+    "test": "node --test tests/*.test.mjs",
+    "test:ui": "node --test --test-concurrency=1 tests/*.e2e.mjs",
+    "package": "npm run build && electron-builder --mac dir --arm64",
+    "test:native": "node scripts/test-native.mjs"
+  },
+  "dependencies": {
+    "@xyflow/react": "12.12.0",
+    "lucide-react": "^0.577.0",
+    "markdown-it": "^15.0.2",
+    "pngjs": "^7.0.0",
+    "prosemirror-commands": "^1.7.2",
+    "prosemirror-dropcursor": "^1.8.4",
+    "prosemirror-gapcursor": "^1.4.1",
+    "prosemirror-history": "^1.5.1",
+    "prosemirror-inputrules": "^1.5.1",
+    "prosemirror-keymap": "^1.2.3",
+    "prosemirror-markdown": "^1.13.8",
+    "prosemirror-model": "^1.25.12",
+    "prosemirror-schema-list": "^1.5.1",
+    "prosemirror-state": "^1.4.4",
+    "prosemirror-tables": "^1.8.5",
+    "prosemirror-view": "^1.42.6",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "react-markdown": "^10.1.0",
+    "remark-gfm": "^4.0.1"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.58.2",
+    "@resvg/resvg-js": "^2.6.2",
+    "@vitejs/plugin-react": "latest",
+    "electron": "44.7.2",
+    "electron-builder": "^26.0.12",
+    "vite": "8.3.4"
+  },
+  "build": {
+    "appId": "com.nischal.tangent-canvas",
+    "productName": "Tangent Canvas",
+    "asar": true,
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "electron/**/*",
+      "package.json",
+      "assets/icon.png"
+    ],
+    "mac": {
+      "category": "public.app-category.developer-tools",
+      "identity": null,
+      "icon": "assets/icon.icns",
+      "target": [
+        {
+          "target": "dir",
+          "arch": [
+            "arm64"
+          ]
+        }
+      ]
+    }
+  }
+}

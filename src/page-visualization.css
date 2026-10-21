@@ -1,0 +1,11 @@
+/* Natural figure height is reported by the opaque child. No fixed crop. */
+.page-visualization:has(iframe.page-visualization-frame) { overflow: visible; }
+.page-visualization iframe.page-visualization-frame,
+iframe.page-visualization-frame {
+  display: block;
+  width: 100%;
+  min-height: 0;
+  max-height: none;
+  border: 0;
+  background: transparent;
+}

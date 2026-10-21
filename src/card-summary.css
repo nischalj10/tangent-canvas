@@ -1,0 +1,28 @@
+.card-summary { display:flex; flex:0 0 auto; align-items:flex-start; gap:9px; min-width:0; padding:10px 14px; border-bottom:1px solid #0000000a; background:#fafafa; color:#454545; }
+.card-summary-symbol { display:flex; flex:0 0 14px; justify-content:center; margin-top:3px; color:#8b8b8b; }
+.card-summary.has-error .card-summary-symbol { color:#8a6a55; }
+.card-summary-content { flex:1; min-width:0; }
+.card-summary-text { display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2; overflow:hidden; margin:0; color:inherit; font-size:13px; line-height:20px; font-weight:400; text-wrap:pretty; }
+.card-summary.is-working .card-summary-text { color:#747474; }
+.card-summary-regenerate { display:flex; flex:0 0 24px; align-items:center; justify-content:center; width:24px; height:24px; margin:-2px -4px 0 0; padding:0; border-radius:6px; color:#8b8b8b; }
+.card-summary-regenerate:hover:not(:disabled),.card-summary-error button:hover:not(:disabled) { color:#303030; background:#00000008; }
+.card-summary-regenerate:disabled { opacity:.4; cursor:default; }
+.card-summary-regenerate:focus-visible,.card-summary-error button:focus-visible,.board-summary-button:focus-visible { outline:2px solid #a8a8a8; outline-offset:2px; }
+.card-summary-error { display:block; margin-top:3px; color:#858585; font-size:11px; line-height:16px; }
+.card-summary-error button { border-radius:4px; padding:0 3px; margin-left:1px; color:#555; text-decoration:underline; text-underline-offset:2px; }
+.card-summary-error-detail { overflow:hidden; white-space:nowrap; text-overflow:ellipsis; }
+.is-collapsed > .card-summary { padding:8px 14px; border-bottom:0; border-radius:0 0 16px 16px; }
+.is-collapsed > .card-summary .card-summary-error { position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); }
+.is-collapsed:has(> .card-summary) > .collapsed-preview { display:none; }
+.note-card > .card-summary { background:#00000002; }
+.board-summary-control { display:flex; flex:0 0 auto; align-items:center; position:relative; }
+.board-summary-button { gap:7px; }
+.board-summary-button:disabled { color:#999; cursor:default; }
+.board-summary-button[aria-busy="true"] { color:#5d5d5d; }
+.board-summary-status { position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; }
+@media(max-width:1100px) {
+  .canvas-dock > .dock-button > span { display:none; }
+  .canvas-dock > .dock-button { justify-content:center; min-width:34px; }
+  .board-summary-button { padding-left:8px; padding-right:8px; }
+  .board-summary-button > span { max-width:108px; overflow:hidden; text-overflow:ellipsis; }
+}

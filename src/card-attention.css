@@ -1,0 +1,20 @@
+.react-flow__node .canvas-card.chat-card[data-attention="working"],
+.floating-side-chat[data-attention="working"] { --reply-attention: 234 179 8; }
+.react-flow__node .canvas-card.chat-card[data-attention="completed"],
+.floating-side-chat[data-attention="completed"] { --reply-attention: 34 197 94; }
+
+.react-flow__node .canvas-card.chat-card[data-attention],
+.floating-side-chat[data-attention] {
+  box-shadow: 0 0 0 1px rgb(var(--reply-attention) / .26),
+    0 4px 18px rgb(var(--reply-attention) / .18),
+    0 10px 42px rgb(var(--reply-attention) / .26);
+}
+.react-flow__node .canvas-card.chat-card.is-selected[data-attention] {
+  box-shadow: 0 0 0 2px #00000036,
+    0 4px 18px rgb(var(--reply-attention) / .20),
+    0 10px 42px rgb(var(--reply-attention) / .28);
+}
+.floating-side-chat { transition: box-shadow 140ms ease; }
+@media (prefers-reduced-motion: reduce) {
+  .floating-side-chat { transition: none; }
+}

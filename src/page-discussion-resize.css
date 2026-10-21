@@ -1,0 +1,12 @@
+.page-reader-shell .page-discussion-panel,.page-reader-shell.is-view-half .page-discussion-panel { width:var(--page-discussion-width,420px); min-width:0; flex:0 0 var(--page-discussion-width,420px); position:relative; }
+.page-reader-shell.is-view-half .page-discussion-panel { position:absolute; }
+.page-discussion-resize { position:absolute; z-index:8; inset:0 auto 0 -5px; width:10px; cursor:col-resize; touch-action:none; -webkit-app-region:no-drag; outline:none; }
+.page-discussion-resize > span { position:absolute; left:4px; top:0; bottom:0; width:1px; background:transparent; transition:background-color 120ms ease; }
+.page-discussion-resize:hover > span,.page-discussion-resize:focus-visible > span,.resizing-page-discussion .page-discussion-resize > span { width:2px; background:#a5a5a5; }
+.page-discussion-resize:focus-visible::after { content:''; position:absolute; left:1px; top:calc(50% - 22px); width:7px; height:44px; border-radius:6px; outline:2px solid #aaa; }
+.resizing-page-discussion,.resizing-page-discussion * { cursor:col-resize!important; user-select:none!important; }
+.page-reader-shell .page-discussion-panel .page-panel-heading { min-height:52px; padding:16px 18px 12px 20px; }
+.page-reader-shell .page-discussion-panel .page-panel-heading > strong { color:#4d4d4d; font-size:18px; font-weight:550; letter-spacing:-.025em; }
+.page-reader-shell .page-discussion-target { padding:0 20px 16px; }
+.page-reader-shell .page-discussion-panel .page-thread-messages { padding:22px 20px; }
+.page-reader-shell .page-discussion-panel .page-ask-form { margin:12px 16px 0; }
