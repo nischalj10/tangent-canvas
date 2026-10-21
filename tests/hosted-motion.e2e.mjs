@@ -1,3 +1,4 @@
+import {attachFixturePage} from './canvas-setup-helpers.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
@@ -27,8 +28,7 @@ test('native Browser fallback remains aligned across retained Page exits, sideba
     const profile=session.fromPartition('persist:tangent-chatgpt-pages');
     await profile.protocol.handle('https',()=>new Response('<!doctype html><title>Hosted motion fixture</title><h1>Isolated native Page</h1><textarea data-testid="native-draft">Persistent native draft</textarea><p>This fixture never contacts a remote Page.</p>',{headers:{'content-type':'text/html'}}));
   });
-  await page.getByTestId('new-page').click();await page.getByTestId('page-link-url').fill(source.metadata.url);await page.getByTestId('page-link-submit').click();
-  let linked;await expect.poll(async()=>{linked=(await board()).nodes.find(node=>node.kind==='page');return linked?.pageSyncStatus},{timeout:15000}).toBe('ready');
+  let linked=await attachFixturePage(page,{url:source.metadata.url});
   const shell=page.getByTestId(`page-focus-${linked.id}`),body=page.getByTestId(`page-body-${linked.id}`);
   await expect(shell).toBeVisible();
   await page.getByTestId(`page-title-menu-${linked.id}`).click();await page.getByTestId(`page-browser-${linked.id}`).click();await page.getByTestId(`page-open-${linked.id}`).click();

@@ -54,6 +54,7 @@ if(!gotLock){app.quit()}else{
     }).catch(error=>{quitting=false;reportSaveFailure(error)});
   });
   app.whenReady().then(async()=>{
+    if(process.platform==='darwin')app.dock?.setIcon(path.join(here,'../assets/icon.png'));
     const directory=app.getPath('userData');
     service=new CanvasService(new CanvasStore(directory),new CodexClient({cwd:directory,binary:!app.isPackaged&&process.env.TANGENT_E2E==='1'?process.env.TANGENT_TEST_CODEX_BINARY:undefined}));
     service.setPageConnector(new PageConnector({directory,binary:!app.isPackaged&&process.env.TANGENT_E2E==='1'?process.env.TANGENT_TEST_CODEX_BINARY:undefined}));

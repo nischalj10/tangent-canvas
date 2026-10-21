@@ -32,7 +32,8 @@ If the app shows **Offline**, check `codex login status`, then open the top-righ
 
 - **Chat** starts a conversation. Select a reply to ask a side question or branch from that point.
 - Drag and resize cards; pinch to zoom. Open chats or Pages full screen, or keep floating chats over a Page.
-- **Page** links a ChatGPT Page. Rich edits sync to the original; **Local page** stays on your Mac. Pages and image generation require those tools to be available to your Codex account.
+- Ask Codex to bring a ChatGPT Page onto the canvas. Rich edits sync to the original. Pages and image generation require those tools to be available to your Codex account.
+- **Note** adds a simple note to the canvas.
 - Choose model, effort, and permissions in each chat. Permissions default to **Full access**; change them in the composer if needed. Choose a folder from the Codex menu to work on local files.
 - **⌘F** searches the current view; **⌘K** jumps to a card.
 

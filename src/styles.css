@@ -4322,9 +4322,29 @@ button:has(> svg:only-child) {
   color: #0d0d0d;
   background: #ededed;
 }
-.note-card,
+.canvas-card.note-card,
 .note-card .card-header {
-  background: #f9f9f9;
+  background: #fff8dc;
+}
+.canvas-card.note-card {
+  border-color: #e6d9a8;
+  box-shadow: 0 2px 8px #6b542009, 0 8px 24px #6b542007;
+}
+.canvas-card.note-card.is-selected {
+  border-color: #c6a84b;
+  box-shadow: 0 0 0 1px #c6a84b30, 0 5px 20px #6b54200b;
+}
+.note-card .card-header {
+  border-bottom-color: #e6d9a880;
+}
+.note-card .card-title:hover,
+.note-card .icon-button:hover,
+.note-card .note-ask:hover {
+  background: #eadba64d;
+}
+.note-card .note-editor::placeholder,
+.note-card .note-footer {
+  color: #786b47;
 }
 .note-editor,
 .note-card .card-title {

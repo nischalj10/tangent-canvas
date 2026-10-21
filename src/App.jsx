@@ -9,7 +9,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import tangentIcon from "../assets/icon.png";
+import tangentIcon from "../assets/logo-transparent.png";
 import RichPageNode from "./RichPageNode.jsx";
 import {createDraftPersistence,flushPendingDrafts} from "./draft-persistence.mjs";
 import {LocalSaveStatus,DocumentSaveStatus} from "./PersistenceStatus.jsx";
@@ -18,7 +18,7 @@ import SteeringNotice from "./SteeringNotice.jsx";
 import ChatFullscreen from "./ChatFullscreen.jsx";
 import PermissionChooser from "./PermissionChooser.jsx";
 import ModelEffortChooser from "./ModelEffortChooser.jsx";
-import CardSummary, {BoardSummaryControl} from "./CardSummary.jsx";
+import CardSummary from "./CardSummary.jsx";
 import CanvasSummaryHover from "./CanvasSummaryHover.jsx";
 import CanvasResizeControls from "./CanvasResizeControls.jsx";
 import ScreenSearch, {screenSearchSource} from "./ScreenSearch.jsx";
@@ -74,6 +74,7 @@ import {
   LoaderCircle,
   Maximize2,
   MessageCircle,
+  MessageSquareText,
   MoreHorizontal,
   PanelLeftClose,
   PanelLeftOpen,
@@ -178,8 +179,7 @@ function SidebarToggle({ expanded, onClick }) {
     onClick={onClick}
     onPointerDown={event => {
       if (event.button !== 0 || event.isPrimary === false) return;
-      // The control moves with the workspace during a sidebar reversal.
-      // Keep an ordinary press attached to it until release.
+      // Keep an ordinary press attached to the control until release.
       press.current = { x: event.clientX, y: event.clientY };
       event.currentTarget.setPointerCapture(event.pointerId);
     }}
@@ -420,7 +420,7 @@ const Message = memo(function Message({ message, node, inherited = false }) {
               }}
             >
               <MessageCircle size={12} />
-              Comment
+              Side chat
             </button>
           </>
         )}
@@ -2448,7 +2448,7 @@ function HelpDialog({ close, motionProps }) {
             <strong>Leave a question, get an answer</strong>
             <p>
               Select text in a reply and choose Ask about this. Codex responds
-              in a separate comment card, on the same canvas.
+              in a separate side chat, on the same canvas.
             </p>
           </div>
         </div>
@@ -2457,8 +2457,8 @@ function HelpDialog({ close, motionProps }) {
           <div>
             <strong>Keep the work beside the conversation</strong>
             <p>
-              Create a document, attach images, and ask Codex about a passage.
-              Your agent can create and update documents in the same canvas.
+              Ask Codex to bring in a Page, then read, edit, or ask about a
+              passage while keeping your conversation beside it.
             </p>
           </div>
         </div>
@@ -3422,7 +3422,7 @@ function CanvasApp() {
   useEffect(() => {
     if (!modal) return;
     const previouslyFocused = modalReturnFocus.current;
-    const background = [...document.querySelectorAll(".sidebar, .sidebar-rail, .workspace, .page-reader-shell:not([hidden]), .floating-side-chat, .floating-chat-reopen, .chat-fullscreen, .chat-focus-toolbar")];
+    const background = [...document.querySelectorAll(".workspace-topbar, .sidebar, .sidebar-rail, .workspace, .page-reader-shell:not([hidden]), .floating-side-chat, .floating-chat-reopen, .chat-fullscreen, .chat-focus-toolbar")];
     const priorInert = background.map(element => element.inert);
     background.forEach((element) => {
       element.inert = true;
@@ -3651,21 +3651,47 @@ function CanvasApp() {
     <CanvasContext.Provider value={context}>
       <CanvasActionsContext.Provider value={actions}>
       <div className={`app-shell ${sidebar ? "" : "sidebar-hidden"} ${focusPageId ? `is-page-focused is-page-focused-${pageViewMode}` : ""} ${fullChatNode ? "is-chat-focused" : ""}`}>
-        <aside {...sidebarMotion.props} className="sidebar" hidden={!sidebarMotion.value}>
-          <div className="sidebar-brand">
-            <Mark />
-            <span>Tangent</span>
-            <SidebarToggle expanded onClick={() => setSidebar(false)} />
+        <header className="workspace-topbar">
+          <div className="workspace-toolbar-left">
+            <SidebarToggle expanded={sidebar} onClick={() => setSidebar(value => !value)} />
+            <div id="page-toolbar-slot" className="page-toolbar-slot" data-testid="page-toolbar-slot" />
           </div>
-          <button
-            className="sidebar-search"
-            onClick={() => setModal("search")}
-            data-testid="find-card"
-          >
-            <Search size={14} />
-            <span>Find a thought</span>
-            <kbd>⌘ K</kbd>
-          </button>
+          <div className="workspace-top-actions">
+            <IconButton title="Find in this view · ⌘F" data-testid="screen-search-open" onClick={openScreenSearch}><Search size={15}/></IconButton>
+            <LocalSaveStatus initial={state.persistence}/>
+            <IconButton
+              title="Export canvas"
+              data-testid="export-board"
+              onClick={() => invoke("app/export", { boardId: board.id })}
+            >
+              <Download size={15} />
+            </IconButton>
+            <button
+              className={`connection-button ${connectionOpen ? "is-open" : ""}`}
+              data-testid="connection-settings"
+              ref={connectionButton}
+              aria-label="Codex settings"
+              aria-expanded={connectionOpen}
+              aria-controls="codex-connection-popover"
+              onClick={() => setConnectionOpen((value) => !value)}
+            >
+              <span
+                className={`connection-dot ${connection.connected && !connection.error ? "connected" : ""}`}
+              />
+              <span>
+                {reconnecting
+                  ? "Connecting…"
+                  : connection.error
+                  ? "Needs attention"
+                  : connection.connected
+                    ? "Codex"
+                    : "Offline"}
+              </span>
+              <ChevronDown size={11} />
+            </button>
+          </div>
+        </header>
+        <aside {...sidebarMotion.props} className="sidebar" hidden={!sidebarMotion.value}>
           <div className="sidebar-section-title">
             <span>Your canvases</span>
             <IconButton
@@ -3736,7 +3762,7 @@ function CanvasApp() {
                 ) : node.parentId ? (
                   <GitBranch size={13} />
                 ) : (
-                  <Circle size={7} fill="currentColor" />
+                  <MessageSquareText size={13} />
                 )}
                 <span>{node.title}</span>
                 {busy(node) && <span className="outline-running" />}
@@ -3786,46 +3812,6 @@ function CanvasApp() {
           <span className={`connection-dot rail-connection-status ${connection.connected && !connection.error ? "connected" : ""}`} title={connection.error ? "Codex needs attention" : connection.connected ? "Your Codex, connected" : "Connecting to Codex"} />
         </aside>}
         <main className="workspace">
-          <header className="workspace-topbar">
-            <div className="workspace-toolbar-left">
-              {!sidebar && <SidebarToggle expanded={false} onClick={() => setSidebar(true)} />}
-              <div id="page-toolbar-slot" className="page-toolbar-slot" data-testid="page-toolbar-slot" />
-            </div>
-            <div className="workspace-top-actions">
-              <IconButton title="Find in this view · ⌘F" data-testid="screen-search-open" onClick={openScreenSearch}><Search size={15}/></IconButton>
-              <LocalSaveStatus initial={state.persistence}/>
-              <IconButton
-                title="Export canvas"
-                data-testid="export-board"
-                onClick={() => invoke("app/export", { boardId: board.id })}
-              >
-                <Download size={15} />
-              </IconButton>
-              <button
-                className={`connection-button ${connectionOpen ? "is-open" : ""}`}
-                data-testid="connection-settings"
-                ref={connectionButton}
-                aria-label="Codex settings"
-                aria-expanded={connectionOpen}
-                aria-controls="codex-connection-popover"
-                onClick={() => setConnectionOpen((value) => !value)}
-              >
-                <span
-                  className={`connection-dot ${connection.connected && !connection.error ? "connected" : ""}`}
-                />
-                <span>
-                  {reconnecting
-                    ? "Connecting…"
-                    : connection.error
-                    ? "Needs attention"
-                    : connection.connected
-                      ? "Codex"
-                      : "Offline"}
-                </span>
-                <ChevronDown size={11} />
-              </button>
-            </div>
-          </header>
           <div className="canvas-surface" data-testid="canvas-surface">
             <ReactFlow
               nodes={nodes}
@@ -3968,16 +3954,6 @@ function CanvasApp() {
                 <Plus size={17} />
                 <span>Chat</span>
               </button>
-              <span className="dock-divider" />
-              <button
-                className="dock-button"
-                data-testid="new-comment"
-                onClick={() => createNode("comment")}
-                title="New agent-answered comment"
-              >
-                <MessageCircle size={17} />
-                <span>Comment</span>
-              </button>
               <button
                 className="dock-button"
                 data-testid="new-note"
@@ -3987,26 +3963,6 @@ function CanvasApp() {
                 <StickyNote size={17} />
                 <span>Note</span>
               </button>
-              <button
-                className="dock-button"
-                data-testid="new-document"
-                onClick={() => createNode("document")}
-                title="New local page"
-              >
-                <FileText size={17} />
-                <span>Local page</span>
-              </button>
-              <button
-                className="dock-button"
-                data-testid="new-page"
-                onClick={() => setModal("page-link")}
-                title="Link an actual ChatGPT Page"
-              >
-                <Globe size={17} />
-                <span>Page</span>
-              </button>
-              <span className="dock-divider" />
-              <BoardSummaryControl key={board.id} board={board} invoke={invoke} />
               <span className="dock-divider" />
               <IconButton
                 title="Fit all cards"

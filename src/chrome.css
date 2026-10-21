@@ -8,13 +8,20 @@ body {
 }
 body:has(.app-shell.sidebar-hidden) { --sidebar-current: var(--sidebar-rail); }
 
+/* The global toolbar spans both columns; their contents begin beneath it. */
+.app-shell { padding-top: var(--workspace-header-height); }
+.app-shell > .sidebar { padding-top: 16px; }
+.app-shell.sidebar-hidden > .sidebar[data-motion-state="closing"] {
+  top: var(--workspace-header-height);
+  height: calc(100% - var(--workspace-header-height));
+}
 .app-shell > .sidebar-rail {
   display: flex;
   flex-direction: column;
   align-items: center;
   flex: 0 0 var(--sidebar-rail);
   width: var(--sidebar-rail);
-  padding: 60px 8px 22px;
+  padding: 16px 8px 22px;
   background: #f9f9f9;
   border-right: 1px solid #0000000a;
   z-index: 10;
@@ -22,11 +29,8 @@ body:has(.app-shell.sidebar-hidden) { --sidebar-current: var(--sidebar-rail); }
 .sidebar-rail > .rail-connection-status { margin-top: auto; }
 .app-shell .workspace-topbar {
   height: var(--workspace-header-height);
-  padding: 7px 16px;
+  padding: 7px 16px 7px 100px;
   z-index: 24;
-}
-.app-shell.sidebar-hidden .workspace .workspace-topbar {
-  padding-left: 56px;
 }
 .workspace-toolbar-left { display: flex; align-items: center; flex: 1; min-width: 0; gap: 12px; }
 .workspace-toolbar-left > .icon-button { width: 32px; height: 32px; flex: none; border-radius: 7px; }
@@ -105,7 +109,6 @@ body:has(.app-shell.sidebar-hidden) { --sidebar-current: var(--sidebar-rail); }
 
 @media (max-width: 800px) {
   .app-shell .workspace-topbar { padding-right: 14px; }
-  .app-shell .sidebar-brand .icon-button { display: inline-flex; }
 }
 
 /* The exposed canvas is a real pane; controls and React Flow share its bounds. */
@@ -185,8 +188,7 @@ body:has(.app-shell.sidebar-hidden) { --sidebar-current: var(--sidebar-rail); }
   outline: none;
 }
 
-.app-shell.is-page-focused .workspace-topbar { padding-left: 8px; padding-right: 8px; }
-.app-shell.is-page-focused.sidebar-hidden .workspace-topbar { padding-left: 56px; }
+.app-shell.is-page-focused .workspace-topbar { padding-left: 100px; padding-right: 8px; }
 .app-shell > .sidebar-rail { background:#f4f4f4; border-right-color:#e9e9e9; }
 .board-list > .board-row { min-height:36px; border-radius:8px; }
 .board-list > .board-row.active,.board-list > .board-row:hover { background:#eee; }

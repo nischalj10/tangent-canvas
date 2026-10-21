@@ -1,3 +1,4 @@
+import {attachFixturePage} from './canvas-setup-helpers.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
@@ -66,8 +67,7 @@ test('production Page reader can open explicit browser fallback and return to na
  application=await electron.launch({args:['.','--background'],cwd:root,env:{...process.env,TANGENT_DATA_DIR:path.join(folder,'app'),TANGENT_ALLOW_MULTIPLE:'1',TANGENT_E2E:'1',TANGENT_TEST_CODEX_BINARY:path.join(root,'tests/fixtures/codex-appserver.mjs'),TANGENT_FIXTURE_STATE:path.join(folder,'peer.json'),TANGENT_PAGE_FIXTURE_DIR:sourceDirectory}});
  const page=await application.firstWindow();page.setDefaultTimeout(7000);page.on('pageerror',error=>errors.push(error.message));
  await page.getByTestId('canvas-surface').waitFor();await expect.poll(()=>page.evaluate(()=>window.tangent.invoke('app/connection'))).toMatchObject({connected:true});
- await page.getByTestId('new-page').click();await page.getByTestId('page-link-url').fill(sourceUrl);await page.getByTestId('page-link-submit').click();
- let node;await expect.poll(async()=>{const state=await page.evaluate(()=>window.tangent.invoke('app/state'));node=state.boards.find(board=>board.id===state.activeBoardId).nodes.find(item=>item.kind==='page');return node?.pageSyncStatus}).toBe('ready');
+ const node=await attachFixturePage(page,{url:sourceUrl});
  const focused=page.getByTestId(`page-focus-${node.id}`);await expect(focused).toBeVisible();await expect(focused.locator('[data-page-block-id]')).toHaveCount(81);
  await page.evaluate(({boardId,nodeId})=>window.tangent.invoke('node/update',{boardId,nodeId,position:{x:12000,y:9000}}),{boardId:(await page.evaluate(()=>window.tangent.invoke('app/state'))).activeBoardId,nodeId:node.id});
  await expect.poll(()=>page.locator(`.react-flow__node[data-id="${node.id}"]`).evaluate(element=>element.getBoundingClientRect().x)).toBeGreaterThan(5000);

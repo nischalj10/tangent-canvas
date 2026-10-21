@@ -1,3 +1,4 @@
+import {attachFixturePage} from './canvas-setup-helpers.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
@@ -41,7 +42,7 @@ test('Delete canvas: explicit confirmation, safe cancellation, busy refusal, loc
   const target=await makeBoard('A canvas with Codex branches and a Page');
   await page.getByTestId('new-chat').click();let parent;await expect.poll(async()=>{parent=(await getBoard(target.id)).nodes.find(n=>n.kind==='chat');return Boolean(parent)}).toBe(true);await page.getByTestId(`composer-${parent.id}`).fill('Reply exactly: DELETE_SCOPE_ORIGINAL.');await page.getByTestId(`send-${parent.id}`).click();await expect.poll(async()=>(await getNode(target.id,parent.id)).status).toBe('idle');
   parent=await getNode(target.id,parent.id);const assistant=parent.messages.find(m=>m.role==='assistant');await page.getByTestId(`branch-${assistant.id}`).click();let branch;await expect.poll(async()=>{branch=(await getBoard(target.id)).nodes.find(n=>n.parentId===parent.id);return Boolean(branch?.threadId)}).toBe(true);await expect.poll(async()=>(await getNode(target.id,branch.id)).status).toBe('idle');
-  await page.getByTestId('new-page').click();await page.getByTestId('page-link-url').fill(source.metadata.url);await page.getByTestId('page-link-submit').click();let linked;await expect.poll(async()=>{linked=(await getBoard(target.id)).nodes.find(n=>n.kind==='page');return linked?.pageSyncStatus},{timeout:20000}).toBe('ready');assert.equal(linked.pageSnapshot.blocks.length,81);await page.getByTestId('page-focus-back').click();
+  const linked=await attachFixturePage(page,{boardId:target.id,url:source.metadata.url});assert.equal(linked.pageSnapshot.blocks.length,81);await page.getByTestId('page-focus-back').click();
   const archived=await invoke('node/create',{boardId:target.id,kind:'note',title:'Archived card counted in confirmation'});await invoke('node/archive',{boardId:target.id,nodeId:archived.id});
   const targetBefore=contents(await getBoard(target.id)),keeperBefore=contents(await getBoard(keeper.id));assert.equal(targetBefore.nodes.length,4);assert.ok(targetBefore.edges.some(e=>e.source===parent.id&&e.target===branch.id));
   await select(keeper.id);const beforeCancel=(await state()).boards.map(contents);

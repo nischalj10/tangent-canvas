@@ -1,3 +1,4 @@
+import {attachFixturePage} from './canvas-setup-helpers.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
@@ -29,8 +30,7 @@ test('Page side conversations drag and resize over the reader while retaining na
  app=await electron.launch({args:['.','--background'],cwd:root,env});page=await app.firstWindow();page.setDefaultTimeout(7000);page.on('pageerror',e=>errors.push(e.message));
  await page.getByTestId('canvas-surface').waitFor();await expect.poll(()=>page.evaluate(()=>window.tangent.invoke('app/connection'))).toMatchObject({connected:true});
  await app.evaluate(({BrowserWindow})=>BrowserWindow.getAllWindows()[0].setContentSize(1440,1000));
- await page.getByTestId('new-page').click();await page.getByTestId('page-link-url').fill(source.metadata.url);await page.getByTestId('page-link-title').fill('Side-chat reader');await page.getByTestId('page-link-submit').click();
- let linked;await expect.poll(async()=>{linked=(await board()).nodes.find(n=>n.kind==='page');return linked?.pageSyncStatus},{timeout:20000}).toBe('ready');
+ const linked=await attachFixturePage(page,{url:source.metadata.url,title:'Side-chat reader'});
  const reader=page.getByTestId(`page-focus-${linked.id}`);await expect(reader).toBeVisible();if(await reader.getAttribute('data-page-mode')!=='full')await page.getByTestId(`page-view-toggle-${linked.id}`).click();await expect(reader).toHaveAttribute('data-page-mode','full');
  const figure=reader.getByTestId('page-visualization-frame').first();await figure.scrollIntoViewIfNeeded();const figureHandle=await figure.elementHandle();await expect.poll(async()=>((await figureHandle.contentFrame())?.locator('svg').count())).toBe(1);
  const checkpoint=async stage=>{if(!await figureHandle.evaluate(el=>el.isConnected))throw Error(`Original figure was replaced at: ${stage}`)};

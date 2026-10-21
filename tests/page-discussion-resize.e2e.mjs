@@ -1,3 +1,4 @@
+import {attachFixturePage} from './canvas-setup-helpers.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
@@ -53,8 +54,7 @@ async function fixture(t){
 test('Page discussion resizes with trusted input, keeps native content and drafts, and persists its preferred width',{timeout:140000},async t=>{
   const f=await fixture(t);await f.launch();await f.resize(1440,1000);
   let page=f.page;
-  await page.getByTestId('new-page').click();await page.getByTestId('page-link-url').fill(f.source.metadata.url);await page.getByTestId('page-link-title').fill('Resizable Page discussion');await page.getByTestId('page-link-submit').click();
-  let linked;await expect.poll(async()=>{linked=(await f.board()).nodes.find(item=>item.kind==='page');return linked?.pageSyncStatus},{timeout:20000}).toBe('ready');
+  const linked=await attachFixturePage(page,{url:f.source.metadata.url,title:'Resizable Page discussion'});
   assert.ok((await f.logs()).some(call=>call.tool==='read_page'&&call.server==='codex_apps'),'The connected original Page must come from the isolated fixture peer');
   const id=linked.id;
   let shell=page.getByTestId(`page-focus-${id}`);

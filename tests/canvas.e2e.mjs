@@ -108,7 +108,14 @@ test(
     };
     const create = async (kind) => {
       const before = (await activeBoard()).nodes.map((node) => node.id);
-      await page.getByTestId(`new-${kind}`).click();
+      if (kind === 'chat' || kind === 'note') {
+        await page.getByTestId(`new-${kind}`).click();
+      } else {
+        await page.evaluate(
+          ({boardId,kind}) => window.tangent.invoke('node/create',{boardId,kind}),
+          {boardId:(await activeBoard()).id,kind},
+        );
+      }
       let node;
       await expect
         .poll(async () => {
@@ -134,6 +141,15 @@ test(
     });
 
     await launch();
+    const canvasTools = page.getByRole("toolbar", {name:"Canvas tools",exact:true});
+    await expect(canvasTools.getByRole("button")).toHaveCount(4);
+    await expect(canvasTools.getByTestId("new-chat")).toBeVisible();
+    await expect(canvasTools.getByTestId("new-note")).toBeVisible();
+    await expect(canvasTools.getByTestId("fit-canvas")).toBeVisible();
+    await expect(canvasTools.getByTestId("toggle-minimap")).toBeVisible();
+    for (const removed of ["new-comment","new-document","new-page","summarize-cards"])
+      await expect(page.getByTestId(removed)).toHaveCount(0);
+    await expect(page.getByTestId("find-card")).toHaveCount(0);
     await expect(
       page.getByText("Keep the thread.", { exact: false }),
     ).toBeVisible();
@@ -821,16 +837,19 @@ test(
         );
       });
     });
-    await page.getByTestId("new-page").click();
-    await page
-      .getByTestId("page-link-url")
-      .fill("https://example.com/not-a-page");
-    await expect(page.getByTestId("page-link-submit")).toBeDisabled();
-    await page.getByTestId("page-link-url").fill(hostedUrl);
-    await page
-      .getByTestId("page-link-title")
-      .fill("Native hosted Page fixture");
-    await page.getByTestId("page-link-submit").click();
+    const pageBoard = (await activeBoard()).id;
+    const nodesBeforeInvalidLink = (await activeBoard()).nodes.map(node => node.id);
+    await assert.rejects(
+      page.evaluate(({boardId}) => window.tangent.invoke("page/link", {
+        boardId, url: "https://example.com/not-a-page",
+      }), {boardId:pageBoard}),
+      /ChatGPT Page|chatgpt\.com|page_/i,
+    );
+    assert.deepEqual((await activeBoard()).nodes.map(node => node.id), nodesBeforeInvalidLink,
+      "An invalid Page link must not create a canvas card");
+    await page.evaluate(({boardId,url}) => window.tangent.invoke("page/link", {
+      boardId, url, title:"Native hosted Page fixture",
+    }), {boardId:pageBoard,url:hostedUrl});
     let hosted;
     await expect
       .poll(async () => {
@@ -952,7 +971,7 @@ test(
       "Reload keeps the original Page card and creates no conversations",
     );
     assert.equal((await card(hosted.id)).pageUrl, hostedUrl);
-    await page.getByTestId("find-card").click();
+    await page.keyboard.press("Meta+k");
     await expect.poll(async () => (await nativeGeometry()).visible).toBe(false);
     await page.evaluate(
       ({ boardId, nodeId }) =>
@@ -1031,7 +1050,7 @@ test(
       "data-native-visible",
       "true",
     );
-    await page.getByTestId("find-card").click();
+    await page.keyboard.press("Meta+k");
     await expect(page.getByTestId(`page-body-${hosted.id}`)).toHaveAttribute(
       "data-native-visible",
       "false",

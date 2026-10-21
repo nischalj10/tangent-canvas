@@ -1,3 +1,4 @@
+import {attachFixturePage} from './canvas-setup-helpers.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
@@ -62,7 +63,7 @@ test('Page view controls: native shortcuts, 75% selection, half/full persistence
   // Put this isolated fixture chat on the exposed left canvas. Interactions
   // below use normal pointer/text input, not DOM event dispatch or state writes.
   await page.evaluate(({boardId,nodeId})=>window.tangent.invoke('node/update',{boardId,nodeId,position:{x:0,y:35}}),{boardId:(await board()).id,nodeId:chat.id});
-  await page.getByTestId('new-page').click();await page.getByTestId('page-link-url').fill(source.metadata.url);await page.getByTestId('page-link-submit').click();let linked;await expect.poll(async()=>{linked=(await board()).nodes.find(n=>n.kind==='page');return linked?.pageSyncStatus},{timeout:20000}).toBe('ready');
+  const linked=await attachFixturePage(page,{url:source.metadata.url});
   const calls=(await fs.readFile(toolLog,'utf8')).trim().split('\n').map(JSON.parse);assert.equal(new Set(calls.filter(c=>c.tool==='read_page_reference').map(c=>c.reference)).size,6,'The authenticated-tool fixture handshake is required before continuing');
   const shell=page.getByTestId(`page-focus-${linked.id}`);await expect(shell).toHaveAttribute('data-page-mode','half');await expect(shell).toHaveAttribute('data-page-zoom','100');await expect(shell.locator('[data-block-id]')).toHaveCount(81);await expect(page.getByTestId(`page-view-toggle-${linked.id}`)).toHaveAttribute('aria-label','Enter full screen');await expect(page.getByTestId(`page-view-toggle-${linked.id}`).locator('svg')).toHaveCount(1);await expect(page.getByTestId(`page-view-toggle-${linked.id}`)).toHaveText('');await expect(page.locator('#page-toolbar-slot')).toBeVisible();await expect(page.locator('#page-toolbar-slot').getByTestId(`page-title-menu-${linked.id}`)).toBeVisible();await expect(page.locator('#page-toolbar-slot').getByText('Half',{exact:true})).toHaveCount(0);await expect(page.locator('#page-toolbar-slot').getByText('Full',{exact:true})).toHaveCount(0);
   let nodeGeometry=(await board()).nodes.map(n=>({id:n.id,position:n.position,width:n.width,height:n.height}));
